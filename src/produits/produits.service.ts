@@ -1,49 +1,46 @@
-export interface Produit {
-    id: number;
-    name: string;
-    price: number;
-}
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { CreateProduitDto } from './create-produit.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Produit } from 'src/entites/produit.entity';
+
 @Injectable()
 export class ProduitsService {
-    products: Produit[] = [
-        { id: 1, name: 'Produit 1', price: 100 },
-        { id: 2, name: 'Produit 2', price: 200 },
-        { id: 3, name: 'Produit 3', price: 300 },
-    ];
+    constructor(
+        @InjectRepository(Produit)
+        private readonly produitRepository: Repository<Produit>,
+    ) { }
 
-    public addProduct(produit: Produit) {
-        const exist = this.products.find(p => p.id === produit.id)
-        if (exist) {
-            throw new Error('Produit deja existant');
-        }
-        this.products.push(produit);
-        return produit;
+    public async addProduct(produit: CreateProduitDto) {
+        return await this.produitRepository.save(produit);
+    }
 
+    public async getProducts(): Promise<Produit[]> {
+        return await this.produitRepository.find();
     }
-    public getProducts(): Produit[] {
-        return this.products;
-    }
-    public getProductById(id: number) {
-        const product = this.products.find(p => p.id === id)
+
+    public async getProductById(id: number): Promise<Produit> {
+        const product = await this.produitRepository.findOne({ where: { id } });
         if (!product) {
-            throw new Error('Produit non existant');
+            throw new NotFoundException('Produit non existant');
         }
         return product;
     }
-    public updateProduct(id: number, produit: Produit): void {
-        const index = this.products.findIndex(p => p.id === id);
-        if (index == -1) {
-            throw new Error('Produit non existant');
+
+    public async updateProduct(id: number, produit: CreateProduitDto) {
+        const result = await this.produitRepository.update(id, produit);
+        if (result.affected === 0) {
+            throw new NotFoundException('Produit non existant');
         }
-        this.products[index] = { ...this.products[index], ...produit };
+        return this.getProductById(id);
     }
-    public deleteProduct(id: number) {
-        const index = this.products.findIndex(p => p.id === id);
-        if (index == -1) {
-            throw new Error('Produit non existant');
+
+    public async deleteProduct(id: number) {
+        const deletedProduit = await this.produitRepository.delete({ id });
+        if (deletedProduit.affected === 0) {
+            throw new NotFoundException('Produit non existant');
         }
-        this.products.splice(index, 1);
+
         return "Produit supprimé avec succès";
     }
 }
