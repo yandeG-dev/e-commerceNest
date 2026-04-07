@@ -12,7 +12,9 @@ export class ProduitsService {
     ) { }
 
     public async addProduct(produit: CreateProduitDto) {
+
         return await this.produitRepository.save(produit);
+
     }
 
     public async getProducts(): Promise<Produit[]> {

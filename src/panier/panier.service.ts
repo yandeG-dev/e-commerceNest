@@ -17,8 +17,9 @@ export class PanierService {
     ) { }
 
     public async AddToPanier(panier: AddPanierToDto) {
+
         await this.produitsService.getProductById(panier.IdProduit);
-        const exist = await this.articlePanierRepository.findOne({ where: { IdProduit: panier.IdProduit } });
+        const exist = await this.articlePanierRepository.findOne({ where: { IdProduit: panier.IdProduit, IdUser: panier.IdUser } });
 
         if (exist) {
             exist.quantite += panier.quantite ? panier.quantite : 1;
@@ -39,15 +40,15 @@ export class PanierService {
         return article;
     }
 
-    public async deleteToPanier(idProduit: number) {
-        const deleted = await this.articlePanierRepository.delete({ IdProduit: idProduit });
+    public async deleteToPanier(idProduit: number, IdUser: number) {
+        const deleted = await this.articlePanierRepository.delete({ IdProduit: idProduit, IdUser: IdUser });
         if (deleted.affected === 0) {
             throw new NotFoundException("Article non trouvé dans le panier");
         }
         return "Produit supprimé du panier avec succès";
     }
 
-    public async getAll() {
-        return await this.articlePanierRepository.find();
+    public async getAll(UserId: number) {
+        return await this.articlePanierRepository.find({ where: { IdUser: UserId } });
     }
 }

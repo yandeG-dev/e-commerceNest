@@ -8,9 +8,17 @@ export class ArticlePanier {
     id: number;
     @Column()
     quantite: number;
+    @Column()
+    IdProduit: number;
+    @Column()
+    IdUser: number;
+
+
     @ManyToOne(type => Produit, (produit) => produit.articles)
+    @JoinColumn({ name: 'IdProduit' })
     produit: Produit;
 
-    @ManyToOne(() => User, (user) => user.panier)
+    @ManyToOne(type => User, (user) => user.panier)
+    @JoinColumn({ name: 'IdUser' })
     user: User;
 }

@@ -10,7 +10,7 @@ export class AuthService {
         private jwtService: JwtService,
     ) { }
 
-    async register(email: string, pass: string) {
+    async register(email: string, pass: string, nom: string, role: string) {
         const userExists = await this.usersService.findOneByEmail(email);
         if (userExists) {
 
@@ -21,6 +21,8 @@ export class AuthService {
         const user = await this.usersService.create({
             email,
             password: hashedPassword,
+            nom,
+            role
         });
 
         const { password, ...result } = user;

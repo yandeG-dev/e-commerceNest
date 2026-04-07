@@ -15,4 +15,18 @@ export class CreateProduitDto {
     @IsNotEmpty()
     @IsString()
     description: string;
+
+    @IsNotEmpty()
+    @IsString()
+    image: string;
+
+    @IsNotEmpty()
+    @IsInt()
+    @Min(1)
+    stock: number;
+
+    @IsNotEmpty()
+    @IsInt()
+    @Min(1)
+    IdCategorie: number;
 }

@@ -5,6 +5,9 @@ import { ArticlePanier } from './articlePanier.entity';
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Column()
+    nom: string;
     @Column({ unique: true })
     email: string;
     @Column()
