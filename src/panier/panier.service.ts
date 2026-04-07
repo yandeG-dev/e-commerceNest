@@ -25,7 +25,6 @@ export class PanierService {
             return await this.articlePanierRepository.save(exist);
         } else {
             const nouvelArticle = this.articlePanierRepository.create(panier);
-
             return await this.articlePanierRepository.save(nouvelArticle);
         }
 
